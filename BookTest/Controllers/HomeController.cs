@@ -1,5 +1,7 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
 using BookTest.Models;
+using BookTest.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BookTest.Controllers
@@ -7,15 +9,30 @@ namespace BookTest.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IHomeRepository _homeRepository;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IHomeRepository homeRepository)
         {
             _logger = logger;
+            _homeRepository = homeRepository;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string sTerm ="",int? genreId = null)
         {
-            return View();
+            if (string.IsNullOrWhiteSpace(sTerm) && genreId == null && Request.QueryString.HasValue)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            BookDisplayModel bookModel = new()
+            {
+                Books = await _homeRepository.GetBooks(sTerm, genreId),
+                Genres = await _homeRepository.Genres(),
+                STerm = sTerm,
+                GenreId = genreId
+            };
+            
+            return View(bookModel);
         }
 
         public IActionResult Privacy()

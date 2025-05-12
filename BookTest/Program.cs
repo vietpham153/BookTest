@@ -1,4 +1,6 @@
-﻿using BookTest.Data;
+﻿using BookTest;
+using BookTest.Data;
+using BookTest.Repositories;
 using BookTest.Services.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +20,8 @@ builder.Services.AddIdentity<IdentityUser,IdentityRole>(options => options.SignI
     .AddDefaultTokenProviders();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-
+builder.Services.AddTransient<IHomeRepository, HomeRepository>();
+builder.Services.AddTransient<ICartRepository, CartRepository>();
 
 var app = builder.Build();
 
@@ -56,6 +59,7 @@ app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseAuthentication();
 
 app.MapStaticAssets();
 
