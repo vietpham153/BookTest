@@ -44,9 +44,59 @@
     <div class="container">
         @RenderBody()
     </div>
+    <div class="toast-container position-fixed top-0 end-0 p-3 mt-5" style="z-index: 9999">
+        <div id="cartToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    Đã thêm vào giỏ hàng thành công!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    <div class="toast-container position-fixed top-0 end-0 p-3 mt-5" style="z-index: 9999">
+        <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" id="errorToastBody">
+                     Bạn cần đăng nhập để có thể thêm hàng!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
 
 
+
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation-unobtrusive@4.0.0/dist/jquery.validate.unobtrusive.min.js"></script>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                loadCartCount();
+            });
+
+            async function loadCartCount() {
+                try {
+                    const response = await fetch(`/Cart/GetTotalItemInCart`);
+                    if (response.ok) {
+                        const result = await response.json();
+                        const cartCountEl = document.getElementById("cartCount");
+                        if (cartCountEl) {
+                            cartCountEl.innerText = result;
+                        }
+                    } else {
+                        console.error("Lỗi HTTP:", response.status);
+                    }
+                } catch (e) {
+                    console.error("Lỗi khi gọi API:", e);
+                }
+            }
+        </script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

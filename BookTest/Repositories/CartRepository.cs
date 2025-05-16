@@ -120,7 +120,7 @@ namespace BookTest.Repositories
             var cartItemCount = await GetCartItemCount(userId);
             return cartItemCount;
         }
-        public async Task<IEnumerable<ShoppingCart>> GetUserCart()
+        public async Task<ShoppingCart> GetUserCart()
         {
             var userId = GetUserId();
             if (string.IsNullOrEmpty(userId))
@@ -130,7 +130,7 @@ namespace BookTest.Repositories
                 .ThenInclude(a => a.Book)
                 .ThenInclude(a => a.Genre)
                 .Where(a => a.UserId == userId && !a.IsDeleted)
-                .ToListAsync();
+                .FirstOrDefaultAsync();
             return shoppingCart;
         } 
         public async Task<ShoppingCart> GetCart(string userId)
